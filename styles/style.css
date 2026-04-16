@@ -1,0 +1,934 @@
+/* ========================================================
+   CSS VARIABLES & THEMES
+   ======================================================== */
+:root {
+    --transition-speed: 0.5s;
+    --glass-blur: 20px;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-tertiary: #1a1a1a;
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0a0;
+    --text-muted: #666666;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-bg-hover: rgba(255, 255, 255, 0.06);
+    --glass-border-color: rgba(255, 255, 255, 0.1);
+    --glass-border-hover: rgba(255, 255, 255, 0.18);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    --glass-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.35);
+    --glass-inner-glow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    --accent: #ffffff;
+    --accent-dim: rgba(255, 255, 255, 0.07);
+    --divider: rgba(255, 255, 255, 0.06);
+    --nav-bg: rgba(15, 15, 15, 0.55);
+    --dot-color: rgba(255, 255, 255, 0.025);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+    --scrollbar-track: rgba(255, 255, 255, 0.02);
+    --hero-gradient: radial-gradient(ellipse at 50% 0%, rgba(80, 80, 80, 0.12) 0%, transparent 60%);
+    --glow-1: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.04), transparent 40%);
+
+    /* ПУНКТ 2: Орбы фона — видимы в dark */
+    --orb-1: rgba(255, 255, 255, 0.025);
+    --orb-2: rgba(255, 255, 255, 0.018);
+    --orb-3: rgba(255, 255, 255, 0.015);
+}
+
+[data-theme="light"] {
+    --bg-primary: #f2f2f2;
+    --bg-secondary: #e8e8e8;
+    --bg-tertiary: #ddd;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555;
+    --text-muted: #999;
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --glass-bg-hover: rgba(255, 255, 255, 0.6);
+    --glass-border-color: rgba(255, 255, 255, 0.6);
+    --glass-border-hover: rgba(255, 255, 255, 0.8);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0,0,0,0.04);
+    --glass-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.1);
+    --glass-inner-glow: inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+    --accent: #1a1a1a;
+    --accent-dim: rgba(0, 0, 0, 0.05);
+    --divider: rgba(0, 0, 0, 0.06);
+    --nav-bg: rgba(242, 242, 242, 0.5);
+    --dot-color: rgba(0, 0, 0, 0.04);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+    --scrollbar-track: rgba(0, 0, 0, 0.02);
+    --hero-gradient: radial-gradient(ellipse at 50% 0%, rgba(160, 160, 160, 0.25) 0%, transparent 60%);
+    --glow-1: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0,0,0,0.02), transparent 40%);
+
+    /* ПУНКТ 2: Орбы фона — видимы и в light (инвертированы) */
+    --orb-1: rgba(0, 0, 0, 0.03);
+    --orb-2: rgba(0, 0, 0, 0.02);
+    --orb-3: rgba(0, 0, 0, 0.018);
+}
+
+/* ========================================================
+   RESET & BASE
+   ======================================================== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+html::-webkit-scrollbar { width: 6px; }
+html::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+html::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    overflow-x: hidden;
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+/* Hero top glow */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: var(--hero-gradient);
+    pointer-events: none;
+    z-index: 0;
+    transition: background var(--transition-speed) ease;
+}
+
+/* Mouse follow glow */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: var(--glow-1);
+    pointer-events: none;
+    z-index: 0;
+    transition: background 0.3s ease;
+}
+
+/* Dot pattern */
+.bg-pattern {
+    position: fixed; inset: 0;
+    background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none; z-index: 0;
+    transition: background-image var(--transition-speed) ease;
+}
+
+/* ========================================================
+   ПУНКТ 2: ФОНОВЫЕ ОРБЫ — видимы в обеих темах
+   ======================================================== */
+.bg-orbs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    transition: background var(--transition-speed) ease;
+}
+
+.bg-orb--1 {
+    width: 500px; height: 500px;
+    background: var(--orb-1);
+    top: -15%; right: -8%;
+    filter: blur(80px);
+    animation: orbDrift1 22s ease-in-out infinite;
+}
+
+.bg-orb--2 {
+    width: 400px; height: 400px;
+    background: var(--orb-2);
+    bottom: -10%; left: -5%;
+    filter: blur(70px);
+    animation: orbDrift2 28s ease-in-out infinite;
+}
+
+.bg-orb--3 {
+    width: 350px; height: 350px;
+    background: var(--orb-3);
+    top: 40%; left: 50%;
+    transform: translate(-50%, -50%);
+    filter: blur(60px);
+    animation: orbDrift3 18s ease-in-out infinite;
+}
+
+@keyframes orbDrift1 {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(-40px, 60px); }
+    66% { transform: translate(30px, -30px); }
+}
+
+@keyframes orbDrift2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(50px, -40px); }
+}
+
+@keyframes orbDrift3 {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-45%, -55%) scale(1.1); }
+}
+
+/* ========================================================
+   ПУНКТ 5: GLASS EFFECT — iOS OPTIMIZED
+   -webkit-backdrop-filter обязателен для Safari/iOS.
+   Добавлен transform: translateZ(0) для принудительного
+   GPU-слоя, что стабилизирует blur на iOS.
+   ======================================================== */
+.glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border-color);
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow), var(--glass-inner-glow);
+    /* iOS GPU fix */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    transition:
+        background var(--transition-speed) ease,
+        border-color var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease,
+        transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.glass:hover {
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-border-hover);
+    box-shadow: var(--glass-shadow-hover), var(--glass-inner-glow);
+}
+
+/* ========================================================
+   NAVIGATION
+   ======================================================== */
+.nav {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: var(--nav-bg);
+    -webkit-backdrop-filter: blur(28px);
+    backdrop-filter: blur(28px);
+    border: 1px solid var(--glass-border-color);
+    border-radius: 16px;
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    box-shadow: var(--glass-shadow), var(--glass-inner-glow);
+    transition: all var(--transition-speed) ease;
+    animation: navSlideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    max-width: calc(100% - 32px);
+    -webkit-transform: translateX(-50%) translateZ(0);
+}
+
+@keyframes navSlideDown {
+    from { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.nav-logo {
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--text-primary); text-decoration: none;
+    letter-spacing: -0.02em;
+    transition: color var(--transition-speed) ease;
+    white-space: nowrap;
+}
+
+.nav-links {
+    display: flex; gap: 28px; list-style: none;
+}
+
+.nav-links a {
+    color: var(--text-secondary); text-decoration: none;
+    font-size: 0.875rem; font-weight: 500;
+    position: relative; transition: color 0.3s ease; padding: 4px 0;
+    white-space: nowrap;
+}
+
+.nav-links a::after {
+    content: ''; position: absolute; bottom: -2px; left: 0;
+    width: 0; height: 1.5px;
+    background: var(--text-primary);
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border-radius: 1px;
+}
+
+.nav-links a:hover { color: var(--text-primary); }
+.nav-links a:hover::after { width: 100%; }
+
+.theme-toggle {
+    background: var(--accent-dim);
+    border: 1px solid var(--glass-border-color);
+    border-radius: 10px;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+    background: var(--glass-bg-hover);
+    transform: rotate(20deg) scale(1.05);
+}
+
+.theme-toggle svg {
+    width: 18px; height: 18px;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Burger */
+.nav-toggle {
+    display: none;
+    background: none; border: none;
+    color: var(--text-primary);
+    cursor: pointer; padding: 4px;
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    align-items: center; justify-content: center;
+}
+
+.nav-toggle svg {
+    width: 22px; height: 22px;
+    transition: transform 0.3s ease;
+}
+
+/* ========================================================
+   SECTIONS
+   ======================================================== */
+section {
+    position: relative; z-index: 1;
+    padding: 100px 0;
+}
+
+.container {
+    max-width: 1100px; margin: 0 auto; padding: 0 24px;
+}
+
+/* ========================================================
+   HERO
+   ======================================================== */
+.hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding-top: 100px;
+    position: relative;
+}
+
+.hero-content {
+    text-align: center; max-width: 720px;
+}
+
+.hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 20px; border-radius: 50px;
+    font-size: 0.8rem; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em; text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.hero h1 {
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.04em; margin-bottom: 24px;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+.hero h1 .line { display: block; }
+
+.hero h1 .accent-text {
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-muted) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-description {
+    font-size: 1.15rem; color: var(--text-secondary);
+    max-width: 520px; margin: 0 auto 40px; line-height: 1.8;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+.hero-buttons {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both;
+}
+
+.btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px; border-radius: 14px;
+    font-size: 0.9rem; font-weight: 600;
+    text-decoration: none; cursor: pointer; border: none;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative; overflow: hidden;
+    font-family: inherit;
+}
+
+.btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+.btn-primary {
+    background: var(--text-primary); color: var(--bg-primary);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+.btn-secondary {
+    background: var(--glass-bg); color: var(--text-primary);
+    border: 1px solid var(--glass-border-color);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.btn-secondary:hover {
+    background: var(--glass-bg-hover);
+    transform: translateY(-2px);
+}
+
+/* ПУНКТ 3: Scroll indicator fix — корректное позиционирование */
+.hero-scroll-indicator {
+    position: absolute;
+    bottom: 32px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--text-muted), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.3; transform: scaleY(0.6); }
+}
+
+/* ========================================================
+   SECTION HEADERS
+   ======================================================== */
+.section-header { text-align: center; margin-bottom: 64px; }
+
+.section-label {
+    display: inline-block;
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 16px;
+    padding: 6px 16px; border-radius: 50px;
+    background: var(--accent-dim);
+    border: 1px solid var(--glass-border-color);
+}
+
+.section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800; letter-spacing: -0.03em;
+    line-height: 1.15; margin-bottom: 16px;
+}
+
+.section-subtitle {
+    font-size: 1.05rem; color: var(--text-secondary);
+    max-width: 500px; margin: 0 auto;
+}
+
+/* ========================================================
+   ABOUT
+   ======================================================== */
+.about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 28px; align-items: start;
+}
+
+.about-card { padding: 40px; }
+
+.about-card h3 {
+    font-size: 1.3rem; font-weight: 700;
+    margin-bottom: 16px; letter-spacing: -0.02em;
+}
+
+.about-card p {
+    color: var(--text-secondary); line-height: 1.8; font-size: 0.95rem;
+}
+
+.about-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+}
+
+.stat-card { padding: 28px; text-align: center; }
+
+.stat-number {
+    font-size: 2.2rem; font-weight: 800;
+    letter-spacing: -0.03em; margin-bottom: 4px; line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+    font-size: 0.8rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
+}
+
+/* ========================================================
+   SKILLS
+   ======================================================== */
+.skills-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+
+.skill-card {
+    padding: 36px 28px; text-align: center; cursor: default;
+}
+
+.skill-card:hover { transform: translateY(-6px); }
+
+.skill-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 16px;
+    background: var(--accent-dim);
+    border: 1px solid var(--glass-border-color);
+    color: var(--text-primary);
+    transition: all 0.4s ease;
+}
+
+.skill-icon svg { width: 24px; height: 24px; }
+
+.skill-card:hover .skill-icon {
+    transform: scale(1.1) rotate(-3deg);
+    background: var(--glass-bg-hover);
+}
+
+.skill-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+.skill-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ========================================================
+   PROJECTS
+   ======================================================== */
+.projects-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px;
+}
+
+.project-card { padding: 0; overflow: hidden; cursor: pointer; }
+.project-card:hover { transform: translateY(-6px); }
+
+.project-preview {
+    width: 100%; height: 220px;
+    background: var(--bg-tertiary);
+    position: relative; overflow: hidden;
+    transition: background var(--transition-speed) ease;
+}
+
+.project-preview-inner {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.12; transition: all 0.5s ease;
+    color: var(--text-primary);
+}
+
+.project-preview-inner svg { width: 64px; height: 64px; }
+
+.project-card:hover .project-preview-inner {
+    opacity: 0.25; transform: scale(1.1);
+}
+
+.project-preview::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, var(--glass-bg) 0%, transparent 50%);
+}
+
+.project-info { padding: 28px; }
+
+.project-tags { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+
+.project-tag {
+    font-size: 0.7rem; padding: 4px 12px; border-radius: 50px;
+    background: var(--accent-dim); color: var(--text-muted);
+    font-weight: 500; letter-spacing: 0.03em; text-transform: uppercase;
+    border: 1px solid var(--glass-border-color);
+}
+
+.project-info h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+.project-info p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; }
+
+.project-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 16px; font-size: 0.85rem; font-weight: 600;
+    color: var(--text-primary); text-decoration: none;
+    transition: gap 0.3s ease;
+}
+
+.project-link:hover { gap: 12px; }
+.project-link svg { width: 14px; height: 14px; transition: transform 0.3s ease; }
+.project-link:hover svg { transform: translateX(2px); }
+
+/* ========================================================
+   EXPERIENCE / TIMELINE
+   ======================================================== */
+.timeline {
+    display: flex; flex-direction: column;
+    gap: 20px; max-width: 720px; margin: 0 auto;
+}
+
+.timeline-item { padding: 32px 36px; position: relative; }
+.timeline-item:hover { transform: translateX(6px); }
+
+.timeline-date {
+    font-size: 0.75rem; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 8px;
+}
+
+.timeline-item h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+.timeline-company { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
+.timeline-item p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+
+/* ========================================================
+   CONTACT
+   ======================================================== */
+.contact-wrapper { max-width: 600px; margin: 0 auto; }
+.contact-card { padding: 48px; text-align: center; }
+
+.contact-card h3 {
+    font-size: 1.5rem; font-weight: 700;
+    margin-bottom: 8px; letter-spacing: -0.02em;
+}
+
+.contact-card > p {
+    color: var(--text-secondary); margin-bottom: 36px;
+    font-size: 0.95rem; line-height: 1.7;
+}
+
+.contact-socials {
+    display: flex; justify-content: center;
+    gap: 14px; flex-wrap: wrap;
+}
+
+.contact-social-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 24px; border-radius: 14px;
+    text-decoration: none; color: var(--text-secondary);
+    font-size: 0.875rem; font-weight: 500;
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.contact-social-link:hover {
+    color: var(--text-primary); transform: translateY(-3px);
+}
+
+.contact-social-link svg { width: 20px; height: 20px; flex-shrink: 0; }
+.contact-social-link span { white-space: nowrap; }
+
+/* ========================================================
+   FOOTER
+   ======================================================== */
+.footer {
+    position: relative; z-index: 1;
+    padding: 60px 0 40px;
+    border-top: 1px solid var(--divider);
+}
+
+.footer-marquee {
+    overflow: hidden; white-space: nowrap;
+    margin-bottom: 40px; opacity: 0.05;
+}
+
+.footer-marquee-inner {
+    display: inline-block;
+    animation: marquee 30s linear infinite;
+}
+
+.footer-marquee-inner span {
+    font-size: 5rem; font-weight: 900;
+    letter-spacing: -0.03em; padding-right: 80px;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.footer-content {
+    display: flex; justify-content: space-between;
+    align-items: start; gap: 40px; flex-wrap: wrap;
+}
+
+.footer-brand { max-width: 300px; }
+
+.footer-brand h4 {
+    font-size: 1.2rem; font-weight: 700;
+    margin-bottom: 10px; letter-spacing: -0.02em;
+}
+
+.footer-brand p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; }
+
+.footer-nav { display: flex; gap: 48px; }
+
+.footer-nav-group h5 {
+    font-size: 0.75rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted); margin-bottom: 16px;
+}
+
+.footer-nav-group ul {
+    list-style: none; display: flex; flex-direction: column; gap: 10px;
+}
+
+.footer-nav-group a {
+    color: var(--text-secondary); text-decoration: none;
+    font-size: 0.875rem; transition: color 0.3s ease, transform 0.3s ease;
+    display: inline-block;
+}
+
+.footer-nav-group a:hover {
+    color: var(--text-primary); transform: translateX(4px);
+}
+
+.footer-bottom {
+    margin-top: 48px; padding-top: 24px;
+    border-top: 1px solid var(--divider);
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 16px;
+}
+
+.footer-bottom p { font-size: 0.8rem; color: var(--text-muted); }
+.footer-bottom-links { display: flex; gap: 20px; }
+
+.footer-bottom-links a {
+    font-size: 0.8rem; color: var(--text-muted); text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-bottom-links a:hover { color: var(--text-primary); }
+
+/* ========================================================
+   ANIMATIONS
+   ======================================================== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.active { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+.reveal-delay-6 { transition-delay: 0.6s; }
+
+.glass-tilt { will-change: transform; }
+
+/* Cursor glow */
+.cursor-glow {
+    position: fixed; width: 300px; height: 300px;
+    border-radius: 50%; pointer-events: none; z-index: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.015), transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease;
+}
+
+[data-theme="light"] .cursor-glow {
+    background: radial-gradient(circle, rgba(0,0,0,0.01), transparent 70%);
+}
+
+/* ========================================================
+   RESPONSIVE — TABLET
+   ======================================================== */
+@media (max-width: 900px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: repeat(2, 1fr); }
+    .projects-grid { grid-template-columns: 1fr; }
+    .footer-content { flex-direction: column; }
+    .project-preview { height: 180px; }
+}
+
+/* ========================================================
+   ПУНКТ 3: FIX — Nest Hub (1024x600) и подобные
+   ======================================================== */
+@media (max-height: 650px) {
+    .hero {
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+
+    .hero-scroll-indicator {
+        bottom: 12px;
+    }
+
+    .hero-buttons {
+        margin-bottom: 0;
+    }
+
+    .hero-description {
+        margin-bottom: 24px;
+    }
+}
+
+/* ========================================================
+   RESPONSIVE — MOBILE
+   ПУНКТ 4: Плавная анимация мобильного меню
+   ======================================================== */
+@media (max-width: 768px) {
+    section { padding: 72px 0; }
+
+    .nav {
+        padding: 10px 16px;
+        gap: 0;
+        justify-content: space-between;
+        width: calc(100% - 32px);
+        top: 12px;
+    }
+
+    /*
+     * ПУНКТ 4: Вместо display:none/flex — используем
+     * max-height + opacity + transform для плавной анимации.
+     * display не анимируется, поэтому меню всегда в DOM.
+     */
+    .nav-links {
+        position: absolute;
+        top: calc(100% + 12px);
+        left: 0; right: 0;
+        flex-direction: column;
+        padding: 0 20px;
+        border-radius: 16px;
+        background: var(--nav-bg);
+        -webkit-backdrop-filter: blur(28px);
+        backdrop-filter: blur(28px);
+        border: 1px solid var(--glass-border-color);
+        box-shadow: var(--glass-shadow);
+        gap: 4px;
+
+        /* Closed state */
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition:
+            max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity 0.3s ease,
+            transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+            padding 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-links.open {
+        max-height: 400px;
+        opacity: 1;
+        padding: 20px;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+
+    .nav-links a {
+        padding: 10px 16px;
+        border-radius: 10px;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+        background: var(--accent-dim);
+    }
+
+    .nav-links a::after { display: none; }
+
+    .nav-toggle { display: flex; }
+
+    .hero { padding-top: 80px; min-height: calc(100vh - 40px); }
+
+    .hero h1 {
+        font-size: clamp(2.2rem, 10vw, 3.5rem);
+    }
+
+    .hero-description {
+        font-size: 1rem; margin-bottom: 32px;
+    }
+
+    .hero-buttons { flex-direction: column; align-items: center; }
+    .hero-buttons .btn { width: 100%; max-width: 300px; justify-content: center; }
+
+    /* ПУНКТ 3: scroll indicator — используем left:0;right:0 вместо left:50%+transform */
+    .hero-scroll-indicator {
+        bottom: 20px;
+    }
+
+    .section-header { margin-bottom: 40px; }
+
+    .section-title {
+        font-size: clamp(1.6rem, 6vw, 2.2rem);
+    }
+
+    .section-subtitle { font-size: 0.9rem; }
+    .about-card { padding: 28px; }
+    .about-stats { gap: 12px; }
+    .stat-card { padding: 20px 16px; }
+    .stat-number { font-size: 1.8rem; }
+    .skills-grid { grid-template-columns: 1fr; gap: 16px; }
+    .skill-card { padding: 28px 24px; }
+    .projects-grid { gap: 20px; }
+    .project-preview { height: 160px; }
+    .project-info { padding: 20px; }
+    .timeline-item { padding: 24px; }
+    .contact-card { padding: 28px; }
+
+    .contact-socials {
+        flex-direction: column; align-items: center; gap: 10px;
+    }
+
+    .contact-social-link {
+        width: 100%; max-width: 280px;
+        justify-content: center;
+    }
+
+    .footer-nav { gap: 24px; flex-wrap: wrap; }
+
+    .footer-marquee-inner span {
+        font-size: 3rem; padding-right: 40px;
+    }
+
+    .footer-bottom {
+        flex-direction: column; text-align: center;
+    }
+}
+
+/* Small phones */
+@media (max-width: 400px) {
+    .container { padding: 0 16px; }
+    .hero h1 { font-size: clamp(1.8rem, 10vw, 2.5rem); }
+    .about-stats { grid-template-columns: 1fr; }
+    .stat-card { padding: 20px; }
+    .nav { padding: 10px 12px; top: 8px; }
+}
