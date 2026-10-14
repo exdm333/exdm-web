@@ -35,6 +35,9 @@ CELL_RANGES = [
 ]
 
 OUTPUT = "ozon/ozon_box_labels.pdf"
+PNG_DIR = "ozon/png"
+# Print resolution for the per-box PNG files (300 DPI = print quality).
+PNG_DPI = 300
 
 
 def fit_font_size(text, font, max_width, start_size):
@@ -74,6 +77,22 @@ def draw_cell(c, page_w, center_y, start, end):
     c.drawCentredString(page_w / 2, center_y - 45 * mm, "\u042f\u0447\u0435\u0439\u043a\u0438")
 
 
+def export_pngs():
+    """Render each PDF page into its own A4 PNG file (one per box)."""
+    import os
+    import pymupdf
+
+    os.makedirs(PNG_DIR, exist_ok=True)
+    doc = pymupdf.open(OUTPUT)
+    for page_index, (start, end) in enumerate(CELL_RANGES):
+        page = doc[page_index]
+        pix = page.get_pixmap(dpi=PNG_DPI)
+        name = f"{page_index + 1:02d}_cells_{start}-{end}.png"
+        pix.save(os.path.join(PNG_DIR, name))
+    doc.close()
+    print(f"Wrote {len(CELL_RANGES)} PNG files into {PNG_DIR} at {PNG_DPI} DPI")
+
+
 def main():
     page_w, page_h = A4
     c = canvas.Canvas(OUTPUT, pagesize=A4)
@@ -86,6 +105,7 @@ def main():
         c.showPage()
     c.save()
     print(f"Wrote {OUTPUT} with {len(CELL_RANGES)} pages")
+    export_pngs()
 
 
 if __name__ == "__main__":
